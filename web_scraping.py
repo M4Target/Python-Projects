@@ -14,11 +14,11 @@ content = []
 ############# setup input ################
 ##########################################
 
-page = 135042
-page_end = 135061
+page = 132235
+page_end = 179794
 scroll_time_setting = 3
 input_file = "scraped_content.html"
-output_file = "第四部 貴族院的自稱圖書委員Ⅳ 外傳 貴族院一年級生.html"
+output_file = "第四部 貴族院的自稱圖書委員Ⅴ.html"
 
 ##########################################
 ############# setup input ################
