@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 
 input_file = "scraped_content.html"
-output_file = "第三部 領主的養女Ⅳ.html"
+output_file = "第四部 貴族院的自稱圖書委員Ⅴ.html"
 
 # Read the HTML content from the file
 with open(input_file, "r", encoding="utf-8") as file:
