@@ -12,7 +12,7 @@ content = []
 
 page = 11029
 page_end = 11030
-scroll_time_setting = 3
+scroll_time_setting = 2
 input_file = "scraped_content.html"
 output_file = "下克上測試.html"
 
@@ -94,7 +94,8 @@ while True:
         if len(filtered_paragraphs) > len(heading):
             page_content = f"<h1>{heading}</h1>\n<p>Web Page: {page}</p>\n"
             page_content += "\n".join([str(paragraph) for paragraph in filtered_paragraphs])
-
+            page_content += '\n<a href="#top">Back to top</a>\n<hr>'
+        
             content.append(f"<h2>{title}</h2>\n{page_content}\n<hr>")
 
     # While loop the process for multiple pages
