@@ -10,11 +10,11 @@ content = []
 ############# setup input ################
 ##########################################
 
-page = 11029
-page_end = 11030
+page = 127287
+page_end = 127312
 scroll_time_setting = 2
 input_file = "scraped_content.html"
-output_file = "下克上測試.html"
+output_file = "第四部 貴族院的自稱圖書委員Ⅲ.html"
 
 ##########################################
 ############# setup input ################
@@ -60,43 +60,70 @@ while True:
 
         content.append(f"<h2>{title}</h2>\n{page_content}\n<hr>")
 
-    # Check for suffixes "_2" and "_3"
-    for suffix in ["_2", "_3"]:
-        url = f"https://tw.linovelib.com/novel/73/{page}{suffix}.html"
-        driver.get(url)
+    # Check for suffixes dynamically
+    suffix = "_2"
+    suffix_url = f"https://tw.linovelib.com/novel/73/{page}{suffix}.html"
+    driver.get(suffix_url)
 
-        # Automatically scroll the page
-        scroll_pause_time = scroll_time_setting  # Pause between each scroll
-        screen_height = driver.execute_script("return window.screen.height;")  # Browser window height
-        i = 1
-        while True:
-            # Scroll down
-            driver.execute_script(f"window.scrollTo(0, {screen_height * i});")
-            i += 1
-            time.sleep(scroll_pause_time)
+    # Automatically scroll the page
+    scroll_pause_time = scroll_time_setting  # Pause between each scroll
+    screen_height = driver.execute_script("return window.screen.height;")  # Browser window height
+    i = 1
+    while True:
+        # Scroll down
+        driver.execute_script(f"window.scrollTo(0, {screen_height * i});")
+        i += 1
+        time.sleep(scroll_pause_time)
 
-            # Check if reaching the end of the page
-            scroll_height = driver.execute_script("return document.body.scrollHeight;")
-            if screen_height * i > scroll_height:
-                break
-        
-        # Fetch the data using BeautifulSoup after all data is loaded
-        soup = BeautifulSoup(driver.page_source, "html.parser")
-        
-        # Filter out unwanted paragraphs
-        paragraphs = soup.select("p")
-        filtered_paragraphs = [p for p in paragraphs if not any(text in p.get_text() for text in unwanted_texts)]
-        
-        # Append the title and filtered paragraphs only if the number of words in filtered paragraphs is greater than or equal to the number of words in heading
-        title = soup.select_one("title").get_text()
-        heading = soup.select_one("h1").get_text() if soup.select_one("h1") else "No Heading"
+        # Check if reaching the end of the page
+        scroll_height = driver.execute_script("return document.body.scrollHeight;")
+        if screen_height * i > scroll_height:
+            break
 
-        if len(filtered_paragraphs) > len(heading):
-            page_content = f"<h1>{heading}</h1>\n<p>Web Page: {page}</p>\n"
-            page_content += "\n".join([str(paragraph) for paragraph in filtered_paragraphs])
-            page_content += '\n<a href="#top">Back to top</a>\n<hr>'
-        
-            content.append(f"<h2>{title}</h2>\n{page_content}\n<hr>")
+    # Fetch the data using BeautifulSoup after all data is loaded
+    suffix_soup = BeautifulSoup(driver.page_source, "html.parser")
+    atitle = suffix_soup.select_one('h1#atitle')
+
+    # Determine the maximum number of suffix pages if atitle is present
+    if atitle:
+        total_suffix_pages = int(atitle.get_text().split('（')[1].split('/')[1].split('）')[0])
+        for i in range(2, total_suffix_pages + 1):
+            suffix = f"_{i}"
+            suffix_url = f"https://tw.linovelib.com/novel/73/{page}{suffix}.html"
+            driver.get(suffix_url)
+
+            # Automatically scroll the page
+            scroll_pause_time = scroll_time_setting  # Pause between each scroll
+            screen_height = driver.execute_script("return window.screen.height;")  # Browser window height
+            j = 1
+            while True:
+                # Scroll down
+                driver.execute_script(f"window.scrollTo(0, {screen_height * j});")
+                j += 1
+                time.sleep(scroll_pause_time)
+
+                # Check if reaching the end of the page
+                scroll_height = driver.execute_script("return document.body.scrollHeight;")
+                if screen_height * j > scroll_height:
+                    break
+            
+            # Fetch the data using BeautifulSoup after all data is loaded
+            soup = BeautifulSoup(driver.page_source, "html.parser")
+            
+            # Filter out unwanted paragraphs
+            paragraphs = soup.select("p")
+            filtered_paragraphs = [p for p in paragraphs if not any(text in p.get_text() for text in unwanted_texts)]
+            
+            # Append the title and filtered paragraphs only if the number of words in filtered paragraphs is greater than or equal to the number of words in heading
+            title = soup.select_one("title").get_text()
+            heading = soup.select_one("h1").get_text() if soup.select_one("h1") else "No Heading"
+
+            if len(filtered_paragraphs) > len(heading):
+                page_content = f"<h1>{heading}</h1>\n<p>Web Page: {page}</p>\n"
+                page_content += "\n".join([str(paragraph) for paragraph in filtered_paragraphs])
+                page_content += '\n<a href="#top">Back to top</a>\n<hr>'
+            
+                content.append(f"<h2>{title}</h2>\n{page_content}\n<hr>")
 
     # While loop the process for multiple pages
     page += 1
